@@ -11,12 +11,14 @@ contract BasicDutchAuction {
     bool public auctionEnded;
     address payable public winner;
     uint256 public currentPrice;
+    uint256 public initialBlock;
 
     constructor(
         uint256 _reservePrice,
         uint256 _numBlocksAuctionOpen,
         uint256 _offerPriceDecrement
     ) public {
+        initialBlock = block.number;
         owner = payable(msg.sender);
         seller = payable(msg.sender);
         reservePrice = _reservePrice;
@@ -35,31 +37,35 @@ contract BasicDutchAuction {
 
     function bid() public payable {
         require(block.number <= auctionEndBlock, "auction already ended");
-        require(msg.value >= currentPrice, "bid cannot be processed");
-        winner = payable(msg.sender);
+        require(msg.value >= updatePrice(), "Insufficient funds.");
         seller.transfer(msg.value);
+        winner = payable(msg.sender);
         auctionEnded = true;
     }
 
-    function refund() public payable {
-        require(!auctionEnded, "Auction is still active");
-        require(msg.sender != winner, "You're the winner. No need of refund");
-        payable(msg.sender).transfer(msg.value);
-    }
+    // function refund() public payable {
+    //     require(!auctionEnded, "Auction is still active");
+    //     require(msg.sender != winner, "You're the winner. No need of refund");
+    //     payable(msg.sender).transfer(msg.value);
+    // }
 
-    function updatePrice() internal {
+    function updatePrice() internal returns (uint) {
         if (block.number <= auctionEndBlock) {
-            currentPrice = currentPrice - offerPriceDecrement;
+            currentPrice =
+                currentPrice -
+                (block.number - initialBlock) *
+                offerPriceDecrement;
         }
+        return currentPrice;
     }
 
-    function endAuction() public {
-        require(block.number > auctionEndBlock, "Auction has not ended yet");
-        require(auctionEnded == false, "Auction has already ended");
-        auctionEnded = true;
-        updatePrice();
-        if (winner == address(0)) {
-            seller.transfer(reservePrice);
-        }
-    }
+    // function finalize() public {
+    //     require(block.number > auctionEndBlock, "Auction has not ended yet");
+    //     require(auctionEnded == false, "Auction has already ended");
+    //     auctionEnded = true;
+    //     updatePrice();
+    //     if (winner == address(0)) {
+    //         seller.transfer(reservePrice);
+    //     }
+    // }
 }
