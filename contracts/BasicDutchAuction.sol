@@ -50,7 +50,7 @@ contract BasicDutchAuction {
     // }
 
     function updatePrice() internal returns (uint) {
-        if (block.number <= auctionEndBlock) {
+        if (block.number <= auctionEndBlock && msg.value >= reservePrice) {
             currentPrice =
                 currentPrice -
                 (block.number - initialBlock) *
@@ -68,4 +68,9 @@ contract BasicDutchAuction {
     //         seller.transfer(reservePrice);
     //     }
     // }
+
+    //first iteration
+    //currentPrice : 200
+    //after iteration : 190
+    //191
 }
