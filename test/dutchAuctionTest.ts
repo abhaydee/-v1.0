@@ -26,7 +26,7 @@ describe("Basic Dutch Auction Contract", function () {
 
   it("it should not allow an invalid bid", async function () {
     try {
-      await contract.bid({ value: 100 });
+      await contract.bid({ value: 90 });
       expect.fail();
     } catch (error: any) {
       expect(error.message).to.be.revertedWith("Insufficient funds.");
