@@ -5,6 +5,14 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
+interface NftDuctionAuctionInterface {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint _tokenId
+    ) external view;
+}
+
 contract NftDutchAuction is ERC721URIStorage {
     uint public reservePrice;
     uint public numBlocksAuctionOpen;
@@ -20,6 +28,7 @@ contract NftDutchAuction is ERC721URIStorage {
 
     address public erc721TAddress;
     uint public nftTokenId;
+    NftDuctionAuctionInterface interfaceRef;
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -32,6 +41,7 @@ contract NftDutchAuction is ERC721URIStorage {
     ) ERC721("NftDutchAuction", "Nft") {
         erc721TAddress = erc721TokenAddress;
         nftTokenId = _nftTokenId;
+        interfaceRef = NftDuctionAuctionInterface(erc721TokenAddress);
         initialBlock = block.number;
         owner = payable(msg.sender);
         seller = payable(msg.sender);
@@ -52,7 +62,7 @@ contract NftDutchAuction is ERC721URIStorage {
     function bid() public payable {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(msg.value >= updatePrice(), "Insufficient funds.");
-        _safeMint(msg.sender, nftTokenId);
+        interfaceRef.transferFrom(owner, msg.sender, nftTokenId);
         winner = payable(msg.sender);
         auctionEnded = true;
     }
