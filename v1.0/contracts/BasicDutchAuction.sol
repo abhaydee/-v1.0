@@ -30,7 +30,6 @@ contract BasicDutchAuction {
             _offerPriceDecrement;
         currentPrice = initialPrice;
         auctionEnded = false;
-
         auctionEndBlock = block.number + numBlocksAuctionOpen;
         winner = payable(address(0));
     }
@@ -43,7 +42,7 @@ contract BasicDutchAuction {
         auctionEnded = true;
     }
 
-    // function refund() public payable {
+    // function  refund() public payable {
     //     require(!auctionEnded, "Auction is still active");
     //     require(msg.sender != winner, "You're the winner. No need of refund");
     //     payable(msg.sender).transfer(msg.value);
