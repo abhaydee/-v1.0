@@ -6,11 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 interface NftDuctionAuctionInterface {
-    function transferFrom(
-        address _from,
-        address _to,
-        uint _tokenId
-    ) external view;
+    function transferFrom(address _from, address _to, uint _tokenId) external;
 }
 
 contract NftDutchAuction is ERC721URIStorage {
@@ -63,7 +59,7 @@ contract NftDutchAuction is ERC721URIStorage {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(msg.value >= updatePrice(), "Insufficient funds.");
         interfaceRef.transferFrom(owner, msg.sender, nftTokenId);
-        winner = payable(msg.sender);
+        // winner = payable(msg.sender);
         auctionEnded = true;
     }
 

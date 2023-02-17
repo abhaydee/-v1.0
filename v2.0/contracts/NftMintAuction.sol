@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
@@ -14,9 +13,9 @@ contract NftMintAuction is ERC721 {
         currentSupply = 0;
     }
 
-    function mint() public payable {
+    function safeMint(address to) public payable {
         require(currentSupply < totalSupply, "All nft's are already minted");
-        _safeMint(msg.sender, tokenId);
+        _safeMint(to, tokenId);
         currentSupply++;
         tokenId++;
     }
