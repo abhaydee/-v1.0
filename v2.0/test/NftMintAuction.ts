@@ -7,6 +7,7 @@ describe("Basic NFT Mint Contract", function () {
   let owner: any;
   let wallet: any;
   let deployMintContract: any;
+
   it("testing the smart contract", async function () {
     const [ownerAddress, otherAccount] = await ethers.getSigners();
     wallet = otherAccount;
@@ -21,8 +22,7 @@ describe("Basic NFT Mint Contract", function () {
   });
 
   it("Test for safe mint functionality", async function () {
-    const testData = await mintNftContract.safeMint(owner.address);
-    console.log("the test data", testData);
+    await mintNftContract.safeMint(owner.address);
   });
 
   it("deploy the nft dutch auction contract", async function () {
@@ -31,7 +31,7 @@ describe("Basic NFT Mint Contract", function () {
     );
     const deployNftAuctionContract = await dutchNftAuctionFactory.deploy(
       deployMintContract.address,
-      1,
+      0,
       100,
       10,
       10
@@ -42,5 +42,11 @@ describe("Basic NFT Mint Contract", function () {
   //approve
   // bid before approve
 
-  it("approval to bid the nft", function () {});
+  it("approval to bid the nft", async function () {
+    await mintNftContract.approve(nftDutchAuctionContract.address, 0);
+  });
+
+  it("nft bidding", async function () {
+    await nftDutchAuctionContract.bid({ value: 250 });
+  });
 });
