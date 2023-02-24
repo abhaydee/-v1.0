@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract MintNftAuction is ERC721 {
+contract NftMintAuction is ERC721 {
     uint public totalSupply;
     uint public currentSupply;
     uint public tokenId = 0;

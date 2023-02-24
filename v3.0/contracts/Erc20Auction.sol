@@ -8,7 +8,7 @@ contract Erc20auction is ERC20, Ownable {
     uint public circulatingSupply;
     uint public tokenId = 0;
 
-    constructor(uint _maxSupply) ERC20("MintAuction", "MTK") {
+    constructor(uint _maxSupply) ERC20("Erc20auction", "ERC") {
         maxSupply = _maxSupply;
     }
 
