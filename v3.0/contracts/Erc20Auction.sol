@@ -12,6 +12,10 @@ contract Erc20auction is ERC20, Ownable {
         maxSupply = _maxSupply;
     }
 
+    function getMaxSupply() public view returns (uint256) {
+        return maxSupply;
+    }
+
     function mint(address to, uint256 amount) public {
         circulatingSupply = totalSupply();
         require(
