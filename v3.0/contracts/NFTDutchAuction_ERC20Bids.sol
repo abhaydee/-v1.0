@@ -5,7 +5,11 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface NftDuctionAuctionInterface {
-    function transferFrom(address _from, address _to, uint _tokenId) external;
+    function safeTransferFrom(address _from, address _to, uint _tokenId) external;
+}
+
+interface ERC20Interface { 
+    function transferFrom(address _from, address _to,uint256 amount) external returns(bool);
 }
 
 contract NFTDutchAuction_ERC20Bids {
@@ -24,7 +28,7 @@ contract NFTDutchAuction_ERC20Bids {
     address public erc721TAddress;
     uint public nftTokenId;
     NftDuctionAuctionInterface interfaceRef;
-
+    ERC20Interface erc20InterfaceRef;
     constructor(
         address erc20TokenAddress,
         address erc721TokenAddress,
@@ -37,6 +41,7 @@ contract NFTDutchAuction_ERC20Bids {
         erc721TAddress = erc721TokenAddress;
         nftTokenId = _nftTokenId;
         interfaceRef = NftDuctionAuctionInterface(erc721TokenAddress);
+        erc20InterfaceRef = ERC20Interface(erc20TokenAddress);
         initialBlock = block.number;
         owner = payable(msg.sender);
         seller = payable(msg.sender);
@@ -57,7 +62,8 @@ contract NFTDutchAuction_ERC20Bids {
     function bid(uint256 amount) public payable {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(amount >= updatePrice(amount), "Insufficient funds.");
-        interfaceRef.transferFrom(owner, msg.sender, nftTokenId);
+        interfaceRef.safeTransferFrom(owner, msg.sender, nftTokenId);
+        erc20InterfaceRef.transferFrom(owner, msg.sender, amount);
         // winner = payable(msg.sender);
         auctionEnded = true;
     }
