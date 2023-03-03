@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "hardhat/console.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 interface NftDuctionAuctionInterface {
     function safeTransferFrom(address _from, address _to, uint _tokenId) external;
@@ -12,13 +13,12 @@ interface ERC20Interface {
     function transferFrom(address _from, address _to,uint256 amount) external returns(bool);
 }
 
-contract NFTDutchAuction_ERC20Bids {
+contract NFTDutchAuction_ERC20Bids is Initializable, UUPSUpgradeable , OwnableUpgradeable{
     uint public reservePrice;
     uint public numBlocksAuctionOpen;
     uint public auctionEndBlock;
     uint public offerPriceDecrement;
     uint public initialPrice;
-    address payable owner;
     address payable public seller;
     bool public auctionEnded;
     address payable public winner;
@@ -29,21 +29,23 @@ contract NFTDutchAuction_ERC20Bids {
     uint public nftTokenId;
     NftDuctionAuctionInterface interfaceRef;
     ERC20Interface erc20InterfaceRef;
-    constructor(
+    function initialize(
         address erc20TokenAddress,
         address erc721TokenAddress,
         uint256 _nftTokenId,
         uint256 _reservePrice,
         uint256 _numBlocksAuctionOpen,
-        uint256 _offerPriceDecrement
-    ) {
-        erc20Address = erc20TokenAddress;
+        uint256 _offerPriceDecrement    
+        
+    ) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+         erc20Address = erc20TokenAddress;
         erc721TAddress = erc721TokenAddress;
         nftTokenId = _nftTokenId;
         interfaceRef = NftDuctionAuctionInterface(erc721TokenAddress);
         erc20InterfaceRef = ERC20Interface(erc20TokenAddress);
         initialBlock = block.number;
-        owner = payable(msg.sender);
         seller = payable(msg.sender);
         reservePrice = _reservePrice;
         offerPriceDecrement = _offerPriceDecrement;
@@ -59,11 +61,20 @@ contract NFTDutchAuction_ERC20Bids {
         winner = payable(address(0));
     }
 
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        onlyOwner
+        override 
+    {}
+
+
+
+
     function bid(uint256 amount) public payable {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(amount >= updatePrice(amount), "Insufficient funds.");
-        interfaceRef.safeTransferFrom(owner, msg.sender, nftTokenId);
-        erc20InterfaceRef.transferFrom(owner, msg.sender, amount);
+        interfaceRef.safeTransferFrom(seller, msg.sender, nftTokenId);
+        erc20InterfaceRef.transferFrom(seller, msg.sender, amount);
         // winner = payable(msg.sender);
         auctionEnded = true;
     }
@@ -94,4 +105,5 @@ contract NFTDutchAuction_ERC20Bids {
     //         seller.transfer(reservePrice);
     //     }
     // }
+
 }

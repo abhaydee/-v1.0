@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers , upgrades} from "hardhat";
 
 describe("Dutch Auction Contract", function () {
   let mintNftContract: any;
@@ -12,7 +12,7 @@ describe("Dutch Auction Contract", function () {
 
   let erc20MintAmount = 500;
 
-  it("testing the nft smart contract", async function () {
+  it("testing the nft smart contract", async function () { 
     const [ownerAddress, otherAccount] = await ethers.getSigners();
     wallet = otherAccount;
     owner = ownerAddress;
@@ -68,14 +68,14 @@ describe("Dutch Auction Contract", function () {
     const dutchNftAuctionFactory = await ethers.getContractFactory(
       "NFTDutchAuction_ERC20Bids"
     );
-    const deployNftAuctionContract = await dutchNftAuctionFactory.deploy(
-      erc20Contract.address,
+    const deployNftAuctionContract = await upgrades.deployProxy(dutchNftAuctionFactory, [erc20Contract.address,
       deployMintContract.address,
       0,
       200,
       10,
-      10
-    );
+      10], { initializer: 'initialize(address, address,uint256, uint256,uint256,uint256)', kind: 'uups'})
+
+   
     nftDutchAuctionContract = await deployNftAuctionContract.deployed();
   });
 
@@ -97,7 +97,10 @@ describe("Dutch Auction Contract", function () {
   });
 
   it("testing the bid functionality", async function () {
-    await nftDutchAuctionContract.bid(600);
+     erc20Contract
+      .connect(wallet)
+      .approve(nftDutchAuctionContract.address, 0)
+     nftDutchAuctionContract.bid(600);
   });
 
   it("testing the max supply for erc20 tokens", async function () {
