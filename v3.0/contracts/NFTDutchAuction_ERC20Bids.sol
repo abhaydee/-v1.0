@@ -63,7 +63,7 @@ contract NFTDutchAuction_ERC20Bids {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(amount >= updatePrice(amount), "Insufficient funds.");
         interfaceRef.safeTransferFrom(owner, msg.sender, nftTokenId);
-        erc20InterfaceRef.transferFrom(owner, msg.sender, amount);
+        erc20InterfaceRef.transferFrom(msg.sender, owner, amount);
         // winner = payable(msg.sender);
         auctionEnded = true;
     }
