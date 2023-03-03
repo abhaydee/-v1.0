@@ -6,14 +6,26 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 interface NftDuctionAuctionInterface {
-    function safeTransferFrom(address _from, address _to, uint _tokenId) external;
+    function safeTransferFrom(
+        address _from,
+        address _to,
+        uint _tokenId
+    ) external;
 }
 
-interface ERC20Interface { 
-    function transferFrom(address _from, address _to,uint256 amount) external returns(bool);
+interface ERC20Interface {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 amount
+    ) external returns (bool);
 }
 
-contract NFTDutchAuction_ERC20Bids is Initializable, UUPSUpgradeable , OwnableUpgradeable{
+contract NFTDutchAuction_ERC20Bids is
+    Initializable,
+    UUPSUpgradeable,
+    OwnableUpgradeable
+{
     uint public reservePrice;
     uint public numBlocksAuctionOpen;
     uint public auctionEndBlock;
@@ -29,18 +41,18 @@ contract NFTDutchAuction_ERC20Bids is Initializable, UUPSUpgradeable , OwnableUp
     uint public nftTokenId;
     NftDuctionAuctionInterface interfaceRef;
     ERC20Interface erc20InterfaceRef;
+
     function initialize(
         address erc20TokenAddress,
         address erc721TokenAddress,
         uint256 _nftTokenId,
         uint256 _reservePrice,
         uint256 _numBlocksAuctionOpen,
-        uint256 _offerPriceDecrement    
-        
+        uint256 _offerPriceDecrement
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
-         erc20Address = erc20TokenAddress;
+        erc20Address = erc20TokenAddress;
         erc721TAddress = erc721TokenAddress;
         nftTokenId = _nftTokenId;
         interfaceRef = NftDuctionAuctionInterface(erc721TokenAddress);
@@ -61,20 +73,17 @@ contract NFTDutchAuction_ERC20Bids is Initializable, UUPSUpgradeable , OwnableUp
         winner = payable(address(0));
     }
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        onlyOwner
-        override 
-    {}
-
-
-
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 
     function bid(uint256 amount) public payable {
         require(block.number <= auctionEndBlock, "auction already ended");
         require(amount >= updatePrice(amount), "Insufficient funds.");
+        require(auctionEnded==false, "auction is closed");
         interfaceRef.safeTransferFrom(seller, msg.sender, nftTokenId);
-        erc20InterfaceRef.transferFrom(seller, msg.sender, amount);
+        console.log("reaching here nft");
+        erc20InterfaceRef.transferFrom(msg.sender, seller, currentPrice);
         // winner = payable(msg.sender);
         auctionEnded = true;
     }
@@ -105,5 +114,4 @@ contract NFTDutchAuction_ERC20Bids is Initializable, UUPSUpgradeable , OwnableUp
     //         seller.transfer(reservePrice);
     //     }
     // }
-
 }

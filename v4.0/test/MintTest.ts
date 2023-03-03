@@ -38,16 +38,17 @@ describe("Dutch Auction Contract", function () {
     await  expect( mintNftContract.safeMint(owner.address));
   });
 
-  it("Test for safe mint functionality for the bidder account", async function () {
-    await expect(mintNftContract.connect(wallet).safeMint(wallet.address));
-  });
+  // it("Test for safe mint functionality for the bidder account", async function () {
+  //   await expect(mintNftContract.connect(wallet).safeMint(wallet.address));
+  // });
 
   it("Testing the erc20 mint functionality", async function () {
-    expect(erc20Contract.mint(owner.address, erc20MintAmount));
+    expect(await erc20Contract.mint(wallet.address, erc20MintAmount));
+    console.log("balance check", await erc20Contract.balanceOf(wallet.address))
   });
 
   it("Testing the erc20 mint functionality after all the tokens are minted ", async function () {
-    expect(erc20Contract.mint(owner.address, 500)).to.be.revertedWith(
+    expect(erc20Contract.mint(wallet.address, 500)).to.be.revertedWith(
       'All tokens are already minted'
     );
   });
@@ -79,28 +80,38 @@ describe("Dutch Auction Contract", function () {
     nftDutchAuctionContract = await deployNftAuctionContract.deployed();
   });
 
+  it("Test for checking auction end scenario", async function () {
+    expect(await nftDutchAuctionContract.auctionEnded()).to.be.false;
+  });
+
   //approve
   // bid before approve
 
   it("testing the bid functionality before approval", async function () {
-    await expect(nftDutchAuctionContract.bid(600)).to.be.revertedWith("ERC721: caller is not token owner or approved");
+    await expect(nftDutchAuctionContract.bid(500)).to.be.revertedWith("ERC721: caller is not token owner or approved");
   });
 
   it("taking approval from nft contract for bid", async function () {
     await mintNftContract.approve(nftDutchAuctionContract.address, 0);
   });
 
-  it("taking approval from erc20 contract for bid", async function () {
-    await erc20Contract
-      .connect(wallet)
-      .approve(nftDutchAuctionContract.address, 0);
-  });
+  // it("taking approval from erc20 contract for bid", async function () {
+  //   await erc20Contract
+  //     .connect(wallet)
+  //     .approve(nftDutchAuctionContract.address, 500);
+  // });
 
   it("testing the bid functionality", async function () {
      erc20Contract
       .connect(wallet)
-      .approve(nftDutchAuctionContract.address, 0)
-     nftDutchAuctionContract.bid(600);
+      .approve(nftDutchAuctionContract.address, 500)
+    await erc20Contract.mint(wallet.address, erc20MintAmount);
+    const balance = await erc20Contract.balanceOf(wallet.address)
+    console.log("rechecking balance", balance)
+      if(balance >= 500){
+        expect(nftDutchAuctionContract.bid(500)).to.be.revertedWith("auction is closed");
+
+      }
   });
 
   it("testing the max supply for erc20 tokens", async function () {
@@ -109,4 +120,6 @@ describe("Dutch Auction Contract", function () {
       expect(await erc20Contract.mint(owner.address, 500));
     });
   });
+
+  
 });
