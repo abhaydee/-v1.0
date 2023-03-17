@@ -78,7 +78,7 @@ describe("Dutch Auction Contract", function () {
     const mintAuctionFactory = await ethers.getContractFactory(
       "NftMintAuction"
     );
-    deployMintContract = await mintAuctionFactory.deploy(5);
+    deployMintContract = await mintAuctionFactory.deploy(2);
     mintNftContract = await deployMintContract.deployed();
     console.log("mint contract deployed");
   });
@@ -97,6 +97,13 @@ describe("Dutch Auction Contract", function () {
     await expect(mintNftContract.safeMint(owner.address));
   });
 
+  it("Test for safe mint functionality duplication", async function () {
+    await expect(mintNftContract.safeMint(owner.address));
+  });
+
+  it("Test for safe mint functionality failure case ", async function () {
+    await expect(mintNftContract.safeMint(owner.address));
+  });
   // it("Test for safe mint functionality for the bidder account", async function () {
   //   await expect(mintNftContract.connect(wallet).safeMint(wallet.address));
   // });
