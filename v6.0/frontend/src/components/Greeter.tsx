@@ -9,8 +9,10 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import GreeterArtifact from '../artifacts/contracts/Greeter.sol/Greeter.json';
+import BasicDutchAuctionArtifact from "../artifacts/contracts/BasicDutchAuction.sol/BasicDutchAuction.json";
 import { Provider } from '../utils/provider';
 import { SectionDivider } from './SectionDivider';
+import { deprecate } from 'util';
 
 const StyledDeployContractButton = styled.button`
   width: 180px;
@@ -57,6 +59,9 @@ export function Greeter(): ReactElement {
   const [greeting, setGreeting] = useState<string>('');
   const [greetingInput, setGreetingInput] = useState<string>('');
 
+  const [basicDutchAuctionContract, setBasicDutchAuctionContract] = useState<Contract>();
+  const [basicDutchAuctionContractAddr, setBasicDuctionAuctionContractAddr] = useState<string>("");
+  const [basicDuctionAuction, setBasicDutchAuction] = useState<string>("");
   useEffect((): void => {
     if (!library) {
       setSigner(undefined);
@@ -117,7 +122,31 @@ export function Greeter(): ReactElement {
       }
     }
 
-    deployGreeterContract(signer);
+    async function deployBasicDutchContract(signer: Signer): Promise<void> {
+      const dutchAuction = new ethers.ContractFactory(
+        BasicDutchAuctionArtifact.abi,
+        BasicDutchAuctionArtifact.bytecode,
+        signer
+      )
+
+      try {
+        const dutchAuctionContract = await dutchAuction.deploy(100, 10, 10);
+        await dutchAuctionContract.deployed();
+
+        setBasicDutchAuctionContract(dutchAuctionContract);
+        window.alert(`Greeter deployed to: ${dutchAuctionContract.address}`);
+        setBasicDuctionAuctionContractAddr(dutchAuctionContract.address);
+      }
+      catch (error: any) {
+        window.alert(
+          'Error!' + (error && error.message ? `\n\n${error.message}` : '')
+        );
+      }
+    }
+
+
+    // deployGreeterContract(signer);
+    deployBasicDutchContract(signer)
   }
 
   function handleGreetingChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -172,21 +201,32 @@ export function Greeter(): ReactElement {
       >
         Deploy Greeter Contract
       </StyledDeployContractButton>
+
+      <StyledDeployContractButton
+        disabled={!active || greeterContract ? true : false}
+        style={{
+          cursor: !active || greeterContract ? 'not-allowed' : 'pointer',
+          borderColor: !active || greeterContract ? 'unset' : 'blue'
+        }}
+        onClick={handleDeployContract}
+      >
+        Deploy Basic Dutch Auction Contract
+      </StyledDeployContractButton>
       <SectionDivider />
       <StyledGreetingDiv>
         <StyledLabel>Contract addr</StyledLabel>
         <div>
-          {greeterContractAddr ? (
-            greeterContractAddr
+          {basicDutchAuctionContractAddr ? (
+            basicDutchAuctionContractAddr
           ) : (
             <em>{`<Contract not yet deployed>`}</em>
           )}
         </div>
         {/* empty placeholder div below to provide empty first row, 3rd col div for a 2x3 grid */}
         <div></div>
-        <StyledLabel>Current greeting</StyledLabel>
+        <StyledLabel></StyledLabel>
         <div>
-          {greeting ? greeting : <em>{`<Contract not yet deployed>`}</em>}
+          {basicDutchAuctionContract ? basicDutchAuctionContract : <em>{`<Contract not yet deployed>`}</em>}
         </div>
         {/* empty placeholder div below to provide empty first row, 3rd col div for a 2x3 grid */}
         <div></div>
