@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import "hardhat/console.sol";
 
 contract BasicDutchAuction {
     uint public reservePrice;
@@ -18,7 +19,7 @@ contract BasicDutchAuction {
         uint256 _reservePrice,
         uint256 _numBlocksAuctionOpen,
         uint256 _offerPriceDecrement
-    ) public {
+    ) {
         initialBlock = block.number;
         owner = payable(msg.sender);
         seller = payable(msg.sender);
@@ -36,7 +37,7 @@ contract BasicDutchAuction {
     }
 
     function bid() public payable {
-        require(block.number <= auctionEndBlock, "auction already ended");
+        // require(block.number <= auctionEndBlock, "auction already ended");
         require(msg.value >= updatePrice(), "Insufficient funds.");
         seller.transfer(msg.value);
         winner = payable(msg.sender);
@@ -58,6 +59,16 @@ contract BasicDutchAuction {
         }
         return currentPrice;
     }
+    
+    function getCurrentPrice() public view returns (uint){
+        return currentPrice;
+    }
+
+    function getWinner() public view returns (address){
+        return winner;
+    }
+
+
 
     // function finalize() public {
     //     require(block.number > auctionEndBlock, "Auction has not ended yet");

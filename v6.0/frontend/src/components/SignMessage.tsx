@@ -42,15 +42,17 @@ export function SignMessage(): ReactElement {
   }
 
   return (
-    <StyledButton
-      disabled={!active ? true : false}
-      style={{
-        cursor: !active ? 'not-allowed' : 'pointer',
-        borderColor: !active ? 'unset' : 'blue'
-      }}
-      onClick={handleSignMessage}
-    >
-      Sign Message
-    </StyledButton>
+    // <StyledButton
+    //   disabled={!active ? true : false}
+    //   style={{
+    //     cursor: !active ? 'not-allowed' : 'pointer',
+    //     borderColor: !active ? 'unset' : 'blue'
+    //   }}
+    //   onClick={handleSignMessage}
+    // >
+    //   Sign Message
+    // </StyledButton>
+    <>
+    </>
   );
 }
