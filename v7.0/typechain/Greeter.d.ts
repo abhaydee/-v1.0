@@ -21,13 +21,22 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface GreeterInterface extends ethers.utils.Interface {
   functions: {
+    "c_0xcef90f7d(bytes32)": FunctionFragment;
     "greet()": FunctionFragment;
     "setGreeting(string)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "c_0xcef90f7d",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "greet", values?: undefined): string;
   encodeFunctionData(functionFragment: "setGreeting", values: [string]): string;
 
+  decodeFunctionResult(
+    functionFragment: "c_0xcef90f7d",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "greet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setGreeting",
@@ -81,6 +90,11 @@ export class Greeter extends BaseContract {
   interface: GreeterInterface;
 
   functions: {
+    c_0xcef90f7d(
+      c__0xcef90f7d: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     greet(overrides?: CallOverrides): Promise<[string]>;
 
     setGreeting(
@@ -88,6 +102,11 @@ export class Greeter extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  c_0xcef90f7d(
+    c__0xcef90f7d: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   greet(overrides?: CallOverrides): Promise<string>;
 
@@ -97,6 +116,11 @@ export class Greeter extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    c_0xcef90f7d(
+      c__0xcef90f7d: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     greet(overrides?: CallOverrides): Promise<string>;
 
     setGreeting(_greeting: string, overrides?: CallOverrides): Promise<void>;
@@ -105,6 +129,11 @@ export class Greeter extends BaseContract {
   filters: {};
 
   estimateGas: {
+    c_0xcef90f7d(
+      c__0xcef90f7d: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     greet(overrides?: CallOverrides): Promise<BigNumber>;
 
     setGreeting(
@@ -114,6 +143,11 @@ export class Greeter extends BaseContract {
   };
 
   populateTransaction: {
+    c_0xcef90f7d(
+      c__0xcef90f7d: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     greet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setGreeting(

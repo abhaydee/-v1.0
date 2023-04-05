@@ -24,6 +24,7 @@ interface BasicDutchAuctionInterface extends ethers.utils.Interface {
     "auctionEndBlock()": FunctionFragment;
     "auctionEnded()": FunctionFragment;
     "bid()": FunctionFragment;
+    "c_0x7b9bc235(bytes32)": FunctionFragment;
     "currentPrice()": FunctionFragment;
     "getCurrentPrice()": FunctionFragment;
     "getWinner()": FunctionFragment;
@@ -45,6 +46,10 @@ interface BasicDutchAuctionInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "bid", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "c_0x7b9bc235",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "currentPrice",
     values?: undefined
@@ -86,6 +91,10 @@ interface BasicDutchAuctionInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "bid", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x7b9bc235",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "currentPrice",
     data: BytesLike
@@ -173,6 +182,11 @@ export class BasicDutchAuction extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    c_0x7b9bc235(
+      c__0x7b9bc235: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     currentPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getCurrentPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -202,6 +216,11 @@ export class BasicDutchAuction extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  c_0x7b9bc235(
+    c__0x7b9bc235: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   currentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCurrentPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -228,6 +247,11 @@ export class BasicDutchAuction extends BaseContract {
     auctionEnded(overrides?: CallOverrides): Promise<boolean>;
 
     bid(overrides?: CallOverrides): Promise<void>;
+
+    c_0x7b9bc235(
+      c__0x7b9bc235: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     currentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -261,6 +285,11 @@ export class BasicDutchAuction extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    c_0x7b9bc235(
+      c__0x7b9bc235: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     currentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCurrentPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -289,6 +318,11 @@ export class BasicDutchAuction extends BaseContract {
 
     bid(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    c_0x7b9bc235(
+      c__0x7b9bc235: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     currentPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
